@@ -1,123 +1,280 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Tutoring Income Tracker</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Tutoring Income Tracker</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+    font-family:Poppins,sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:30px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+    color:#1f2937;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    margin-bottom:25px;
+}
+
+input{
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    width:220px;
+    margin-right:10px;
+}
+
+button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:.9;
+}
+
+.summary{
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.summary-card{
+    flex:1;
+    min-width:200px;
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.amount{
+    font-size:30px;
+    font-weight:600;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#2563eb;
+    color:white;
+    padding:12px;
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+}
+
+.badge-paid{
+    background:#dcfce7;
+    color:#166534;
+    padding:6px 10px;
+    border-radius:20px;
+}
+
+.badge-unpaid{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:6px 10px;
+    border-radius:20px;
+}
+</style>
 </head>
+
 <body>
-  <h1>Tutoring Income Tracker</h1>
 
-  <input id="student" placeholder="Student name">
-  <input id="date" type="date">
-  <input id="rate" type="number" placeholder="Amount owed">
-  <button onclick="addLesson()">Add Lesson</button>
+<div class="container">
 
-  <h2>Lessons</h2>
-  <table border="1" cellpadding="8">
-    <thead>
-      <tr>
-        <th>Student</th>
-        <th>Date</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="lessonTable"></tbody>
-  </table>
+<h1>📚 Tutoring Income Tracker</h1>
 
-  <h2>Summary</h2>
-  <p>Total Owed: $<span id="totalOwed">0</span></p>
-  <p>Total Paid: $<span id="totalPaid">0</span></p>
-  <p>Still Unpaid: $<span id="unpaid">0</span></p>
+<div class="card">
+<h2>Add Lesson</h2>
 
-  <canvas id="incomeChart"></canvas>
+<input id="student" placeholder="Student Name">
+<input id="date" type="date">
+<input id="rate" type="number" placeholder="Amount">
+
+<button onclick="addLesson()">Add Lesson</button>
+</div>
+
+<div class="summary">
+
+<div class="summary-card">
+<h3>Total Earned</h3>
+<div class="amount" id="totalEarned">$0</div>
+</div>
+
+<div class="summary-card">
+<h3>Total Paid</h3>
+<div class="amount" id="totalPaid">$0</div>
+</div>
+
+<div class="summary-card">
+<h3>Still Owed</h3>
+<div class="amount" id="stillOwed">$0</div>
+</div>
+
+</div>
+
+<div class="card">
+<h2>Income Chart</h2>
+<canvas id="incomeChart"></canvas>
+</div>
+
+<div class="card">
+<h2>Lessons</h2>
+
+<table>
+<thead>
+<tr>
+<th>Student</th>
+<th>Date</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="lessonTable"></tbody>
+
+</table>
+</div>
+
+</div>
 
 <script>
-let lessons = JSON.parse(localStorage.getItem("lessons")) || [];
+let lessons = JSON.parse(localStorage.getItem('lessons')) || [];
 
-function saveLessons() {
-  localStorage.setItem("lessons", JSON.stringify(lessons));
+function saveData(){
+localStorage.setItem('lessons',JSON.stringify(lessons));
 }
 
-function addLesson() {
-  const student = document.getElementById("student").value;
-  const date = document.getElementById("date").value;
-  const rate = Number(document.getElementById("rate").value);
+function addLesson(){
 
-  if (!student || !date || !rate) {
-    alert("Please fill out all fields.");
-    return;
-  }
+const student=document.getElementById('student').value;
+const date=document.getElementById('date').value;
+const rate=Number(document.getElementById('rate').value);
 
-  lessons.push({ student, date, rate, paid: false });
-  saveLessons();
-  render();
+if(!student||!date||!rate){
+alert("Fill all fields");
+return;
 }
 
-function markPaid(index) {
-  lessons[index].paid = true;
-  saveLessons();
-  render();
+lessons.push({
+student,
+date,
+rate,
+paid:false
+});
+
+saveData();
+render();
 }
 
-function render() {
-  const table = document.getElementById("lessonTable");
-  table.innerHTML = "";
+function markPaid(index){
+lessons[index].paid=true;
+saveData();
+render();
+}
 
-  let totalOwed = 0;
-  let totalPaid = 0;
+function render(){
 
-  lessons.forEach((lesson, index) => {
-    totalOwed += lesson.rate;
-    if (lesson.paid) totalPaid += lesson.rate;
+let total=0;
+let paid=0;
 
-    table.innerHTML += `
-      <tr>
-        <td>${lesson.student}</td>
-        <td>${lesson.date}</td>
-        <td>$${lesson.rate}</td>
-        <td>${lesson.paid ? "Paid" : "Unpaid"}</td>
-        <td>
-          ${lesson.paid ? "" : `<button onclick="markPaid(${index})">Mark Paid</button>`}
-        </td>
-      </tr>
-    `;
-  });
+const table=document.getElementById('lessonTable');
+table.innerHTML='';
 
-  document.getElementById("totalOwed").innerText = totalOwed;
-  document.getElementById("totalPaid").innerText = totalPaid;
-  document.getElementById("unpaid").innerText = totalOwed - totalPaid;
+lessons.forEach((lesson,index)=>{
 
-  updateChart();
+total+=lesson.rate;
+
+if(lesson.paid)
+paid+=lesson.rate;
+
+table.innerHTML += `
+<tr>
+<td>${lesson.student}</td>
+<td>${lesson.date}</td>
+<td>$${lesson.rate}</td>
+<td>
+${lesson.paid
+? '<span class="badge-paid">Paid</span>'
+: '<span class="badge-unpaid">Unpaid</span>'}
+</td>
+<td>
+${lesson.paid ? '' :
+`<button onclick="markPaid(${index})">Mark Paid</button>`}
+</td>
+</tr>
+`;
+});
+
+document.getElementById('totalEarned').innerHTML='$'+total;
+document.getElementById('totalPaid').innerHTML='$'+paid;
+document.getElementById('stillOwed').innerHTML='$'+(total-paid);
+
+drawChart();
 }
 
 let chart;
 
-function updateChart() {
-  const dates = {};
-  lessons.forEach(lesson => {
-    dates[lesson.date] = (dates[lesson.date] || 0) + lesson.rate;
-  });
+function drawChart(){
 
-  const labels = Object.keys(dates);
-  const values = Object.values(dates);
+const grouped={};
 
-  if (chart) chart.destroy();
+lessons.forEach(l=>{
+grouped[l.date]=(grouped[l.date]||0)+l.rate;
+});
 
-  chart = new Chart(document.getElementById("incomeChart"), {
-    type: "bar",
-    data: {
-      labels: labels,
-      datasets: [{
-        label: "Money Owed by Date",
-        data: values
-      }]
-    }
-  });
+const labels=Object.keys(grouped);
+const values=Object.values(grouped);
+
+if(chart) chart.destroy();
+
+chart=new Chart(document.getElementById('incomeChart'),{
+type:'bar',
+data:{
+labels:labels,
+datasets:[{
+label:'Income',
+data:values
+}]
+}
+});
 }
 
 render();
 </script>
+
 </body>
 </html>
+```
