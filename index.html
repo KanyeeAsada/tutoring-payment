@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tutoring Income Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Tutoring Income Tracker</h1>
+
+  <input id="student" placeholder="Student name">
+  <input id="date" type="date">
+  <input id="rate" type="number" placeholder="Amount owed">
+  <button onclick="addLesson()">Add Lesson</button>
+
+  <h2>Lessons</h2>
+  <table border="1" cellpadding="8">
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="lessonTable"></tbody>
+  </table>
+
+  <h2>Summary</h2>
+  <p>Total Owed: $<span id="totalOwed">0</span></p>
+  <p>Total Paid: $<span id="totalPaid">0</span></p>
+  <p>Still Unpaid: $<span id="unpaid">0</span></p>
+
+  <canvas id="incomeChart"></canvas>
+
+<script>
+let lessons = JSON.parse(localStorage.getItem("lessons")) || [];
+
+function saveLessons() {
+  localStorage.setItem("lessons", JSON.stringify(lessons));
+}
+
+function addLesson() {
+  const student = document.getElementById("student").value;
+  const date = document.getElementById("date").value;
+  const rate = Number(document.getElementById("rate").value);
+
+  if (!student || !date || !rate) {
+    alert("Please fill out all fields.");
+    return;
+  }
+
+  lessons.push({ student, date, rate, paid: false });
+  saveLessons();
+  render();
+}
+
+function markPaid(index) {
+  lessons[index].paid = true;
+  saveLessons();
+  render();
+}
+
+function render() {
+  const table = document.getElementById("lessonTable");
+  table.innerHTML = "";
+
+  let totalOwed = 0;
+  let totalPaid = 0;
+
+  lessons.forEach((lesson, index) => {
+    totalOwed += lesson.rate;
+    if (lesson.paid) totalPaid += lesson.rate;
+
+    table.innerHTML += `
+      <tr>
+        <td>${lesson.student}</td>
+        <td>${lesson.date}</td>
+        <td>$${lesson.rate}</td>
+        <td>${lesson.paid ? "Paid" : "Unpaid"}</td>
+        <td>
+          ${lesson.paid ? "" : `<button onclick="markPaid(${index})">Mark Paid</button>`}
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("totalOwed").innerText = totalOwed;
+  document.getElementById("totalPaid").innerText = totalPaid;
+  document.getElementById("unpaid").innerText = totalOwed - totalPaid;
+
+  updateChart();
+}
+
+let chart;
+
+function updateChart() {
+  const dates = {};
+  lessons.forEach(lesson => {
+    dates[lesson.date] = (dates[lesson.date] || 0) + lesson.rate;
+  });
+
+  const labels = Object.keys(dates);
+  const values = Object.values(dates);
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(document.getElementById("incomeChart"), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Money Owed by Date",
+        data: values
+      }]
+    }
+  });
+}
+
+render();
+</script>
+</body>
+</html>
