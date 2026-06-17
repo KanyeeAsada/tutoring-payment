@@ -5,155 +5,130 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tutoring Income Tracker</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-* {
-    box-sizing: border-box;
-}
-
 body {
-    margin: 0;
-    background: #f4f7fb;
-    font-family: 'Poppins', sans-serif;
-    color: #333;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  color: #222;
 }
 
 .container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 30px;
+  max-width: 1000px;
+  margin: auto;
+  padding: 25px;
 }
 
 h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    color: #1f2937;
+  text-align: center;
 }
 
 .card {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .form-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 input {
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    flex: 1;
-    min-width: 180px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 160px;
 }
 
 button {
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 18px;
-    cursor: pointer;
-    font-weight: 600;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
 }
 
 button:hover {
-    opacity: .9;
+  opacity: 0.9;
 }
 
 .summary {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
-.summary-card {
-    flex: 1;
-    min-width: 220px;
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,.08);
-}
-
-.summary-card h3 {
-    margin: 0;
-    font-size: 15px;
-    color: #666;
+.summary-box {
+  flex: 1;
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  min-width: 180px;
 }
 
 .amount {
-    font-size: 32px;
-    font-weight: 600;
-    margin-top: 10px;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 th {
-    background: #2563eb;
-    color: white;
-    padding: 12px;
+  background: #2563eb;
+  color: white;
+  padding: 10px;
 }
 
 td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    text-align: center;
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
 }
 
-.badge-paid {
-    background: #dcfce7;
-    color: #166534;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 13px;
+.paid {
+  color: green;
+  font-weight: bold;
 }
 
-.badge-unpaid {
-    background: #fee2e2;
-    color: #991b1b;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 13px;
+.unpaid {
+  color: red;
+  font-weight: bold;
 }
 
-.action-btn {
-    background: #10b981;
+.mark-paid {
+  background: #16a34a;
 }
 
-.unpaid-btn {
-    background: #ef4444;
+.mark-unpaid {
+  background: #dc2626;
 }
 
-.delete-btn {
-    background: #6b7280;
-    margin-left: 5px;
+.delete {
+  background: #6b7280;
+  margin-left: 5px;
 }
 
-canvas {
-    max-height: 400px;
+.chart-box {
+  height: 350px;
 }
 
-@media(max-width:768px) {
-    .summary {
-        flex-direction: column;
-    }
-
-    table {
-        display: block;
-        overflow-x: auto;
-    }
+@media(max-width: 700px) {
+  table {
+    display: block;
+    overflow-x: auto;
+  }
 }
 </style>
 </head>
@@ -165,224 +140,184 @@ canvas {
 <h1>📚 Tutoring Income Tracker</h1>
 
 <div class="card">
-<h2>Add Lesson</h2>
+  <h2>Add Lesson</h2>
 
-<div class="form-row">
-<input id="student" placeholder="Student Name">
-
-<input id="date" type="date">
-
-<input id="rate" type="number" placeholder="Amount ($)">
-
-<button onclick="addLesson()">Add Lesson</button>
-</div>
+  <div class="form-row">
+    <input id="student" placeholder="Student Name">
+    <input id="date" type="date">
+    <input id="rate" type="number" placeholder="Amount Owed ($)">
+    <button onclick="addLesson()">Add Lesson</button>
+  </div>
 </div>
 
 <div class="summary">
+  <div class="summary-box">
+    <h3>Total Earned</h3>
+    <div class="amount" id="totalEarned">$0.00</div>
+  </div>
 
-<div class="summary-card">
-<h3>Total Earned</h3>
-<div class="amount" id="totalEarned">$0</div>
+  <div class="summary-box">
+    <h3>Total Paid</h3>
+    <div class="amount" id="totalPaid">$0.00</div>
+  </div>
+
+  <div class="summary-box">
+    <h3>Still Owed</h3>
+    <div class="amount" id="stillOwed">$0.00</div>
+  </div>
 </div>
 
-<div class="summary-card">
-<h3>Total Paid</h3>
-<div class="amount" id="totalPaid">$0</div>
-</div>
-
-<div class="summary-card">
-<h3>Still Owed</h3>
-<div class="amount" id="stillOwed">$0</div>
-</div>
-
+<div class="card chart-box">
+  <h2>Income By Student</h2>
+  <canvas id="incomeChart"></canvas>
 </div>
 
 <div class="card">
-<h2>Income By Date</h2>
-<canvas id="incomeChart"></canvas>
-</div>
+  <h2>Lessons</h2>
 
-<div class="card">
-<h2>Lessons</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
 
-<table>
-<thead>
-<tr>
-<th>Student</th>
-<th>Date</th>
-<th>Amount</th>
-<th>Status</th>
-<th>Actions</th>
-</tr>
-</thead>
-
-<tbody id="lessonTable"></tbody>
-
-</table>
-
+    <tbody id="lessonTable"></tbody>
+  </table>
 </div>
 
 </div>
 
 <script>
-
 let lessons = JSON.parse(localStorage.getItem("lessons")) || [];
+let chart;
 
 function saveData() {
-    localStorage.setItem("lessons", JSON.stringify(lessons));
+  localStorage.setItem("lessons", JSON.stringify(lessons));
 }
 
 function addLesson() {
+  const student = document.getElementById("student").value.trim();
+  const date = document.getElementById("date").value;
+  const rate = Number(document.getElementById("rate").value);
 
-    const student = document.getElementById("student").value.trim();
-    const date = document.getElementById("date").value;
-    const rate = Number(document.getElementById("rate").value);
+  if (!student || !date || !rate) {
+    alert("Please fill in student, date, and amount.");
+    return;
+  }
 
-    if (!student || !date || !rate) {
-        alert("Please complete all fields.");
-        return;
-    }
+  lessons.push({
+    student: student,
+    date: date,
+    rate: rate,
+    paid: false
+  });
 
-    lessons.push({
-        student,
-        date,
-        rate,
-        paid: false
-    });
+  document.getElementById("student").value = "";
+  document.getElementById("date").value = "";
+  document.getElementById("rate").value = "";
 
-    document.getElementById("student").value = "";
-    document.getElementById("date").value = "";
-    document.getElementById("rate").value = "";
-
-    saveData();
-    render();
+  saveData();
+  render();
 }
 
 function togglePaid(index) {
-    lessons[index].paid = !lessons[index].paid;
-    saveData();
-    render();
+  lessons[index].paid = !lessons[index].paid;
+  saveData();
+  render();
 }
 
 function deleteLesson(index) {
-
-    if (!confirm("Delete this lesson?")) {
-        return;
-    }
-
+  if (confirm("Delete this lesson?")) {
     lessons.splice(index, 1);
-
     saveData();
     render();
+  }
 }
 
 function render() {
+  const table = document.getElementById("lessonTable");
+  table.innerHTML = "";
 
-    const table = document.getElementById("lessonTable");
-    table.innerHTML = "";
+  let totalEarned = 0;
+  let totalPaid = 0;
 
-    let totalEarned = 0;
-    let totalPaid = 0;
+  lessons.forEach((lesson, index) => {
+    totalEarned += lesson.rate;
 
-    lessons.forEach((lesson, index) => {
-
-        totalEarned += lesson.rate;
-
-        if (lesson.paid) {
-            totalPaid += lesson.rate;
-        }
-
-        table.innerHTML += `
-        <tr>
-            <td>${lesson.student}</td>
-            <td>${lesson.date}</td>
-            <td>$${lesson.rate.toFixed(2)}</td>
-
-            <td>
-            ${lesson.paid
-                ? '<span class="badge-paid">Paid</span>'
-                : '<span class="badge-unpaid">Unpaid</span>'
-            }
-            </td>
-
-            <td>
-
-            <button
-                class="${lesson.paid ? 'unpaid-btn' : 'action-btn'}"
-                onclick="togglePaid(${index})">
-
-                ${lesson.paid ? 'Mark Unpaid' : 'Mark Paid'}
-
-            </button>
-
-            <button
-                class="delete-btn"
-                onclick="deleteLesson(${index})">
-
-                Delete
-
-            </button>
-
-            </td>
-        </tr>
-        `;
-    });
-
-    document.getElementById("totalEarned").innerHTML =
-        "$" + totalEarned.toFixed(2);
-
-    document.getElementById("totalPaid").innerHTML =
-        "$" + totalPaid.toFixed(2);
-
-    document.getElementById("stillOwed").innerHTML =
-        "$" + (totalEarned - totalPaid).toFixed(2);
-
-    drawChart();
-}
-
-let chart;
-
-function drawChart() {
-
-    const grouped = {};
-
-    lessons.forEach(lesson => {
-
-        grouped[lesson.date] =
-            (grouped[lesson.date] || 0) + lesson.rate;
-
-    });
-
-    const labels = Object.keys(grouped).sort();
-    const values = labels.map(date => grouped[date]);
-
-    if (chart) {
-        chart.destroy();
+    if (lesson.paid) {
+      totalPaid += lesson.rate;
     }
 
-    chart = new Chart(
-        document.getElementById("incomeChart"),
-        {
-            type: "bar",
+    table.innerHTML += `
+      <tr>
+        <td>${lesson.student}</td>
+        <td>${lesson.date}</td>
+        <td>$${lesson.rate.toFixed(2)}</td>
+        <td class="${lesson.paid ? "paid" : "unpaid"}">
+          ${lesson.paid ? "Paid" : "Unpaid"}
+        </td>
+        <td>
+          <button 
+            class="${lesson.paid ? "mark-unpaid" : "mark-paid"}"
+            onclick="togglePaid(${index})">
+            ${lesson.paid ? "Mark Unpaid" : "Mark Paid"}
+          </button>
 
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Income",
-                    data: values
-                }]
-            },
+          <button class="delete" onclick="deleteLesson(${index})">
+            Delete
+          </button>
+        </td>
+      </tr>
+    `;
+  });
 
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        }
-    );
+  document.getElementById("totalEarned").innerText = "$" + totalEarned.toFixed(2);
+  document.getElementById("totalPaid").innerText = "$" + totalPaid.toFixed(2);
+  document.getElementById("stillOwed").innerText = "$" + (totalEarned - totalPaid).toFixed(2);
+
+  drawChart();
+}
+
+function drawChart() {
+  const studentTotals = {};
+
+  lessons.forEach(lesson => {
+    if (!studentTotals[lesson.student]) {
+      studentTotals[lesson.student] = 0;
+    }
+
+    studentTotals[lesson.student] += lesson.rate;
+  });
+
+  const labels = Object.keys(studentTotals);
+  const values = Object.values(studentTotals);
+
+  if (chart) {
+    chart.destroy();
+  }
+
+  chart = new Chart(document.getElementById("incomeChart"), {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Income by Student",
+        data: values
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
 }
 
 render();
-
 </script>
 
 </body>
